@@ -70,8 +70,8 @@ class Entry(db.Model):
     company = ForeignKeyField(Company)
     table = ForeignKeyField(Table, null=True)
     created = DateTimeField(default=datetime.utcnow)
-    modified = DateTimeField()
-    finalized = DateTimeField()
+    modified = DateTimeField(null=True)
+    finalized = DateTimeField(null=True)
     print_date = DateTimeField(null=True)
 
     def save(self, *args, **kwargs):
