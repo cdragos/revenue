@@ -82,3 +82,26 @@ def test_get_hourly(client):
             '23:00:00': '0.00'
         }
     }
+
+
+def test_get_hourly_invalid_date(client):
+    resp = client.get('/api/hourly?start_date=invalid')
+    assert resp.status_code == 400
+    assert resp.json == {
+        'detail': 'Validation Error',
+        'errors': 'Start date is not a valid date.'
+    }
+
+
+def test_get_hourly_missing_date(client):
+    resp = client.get('/api/hourly')
+    assert resp.status_code == 400
+    assert resp.json == {
+        'detail': 'Validation Error',
+        'errors': 'Start date is required.'
+    }
+
+
+def test_get_hourly_invalid_company(client):
+    resp = client.get('/api/hourly?start_date=2018-01-10&company_id=1')
+    assert resp.status_code == 404
