@@ -14,6 +14,8 @@ ENV PYTHONUNBUFFERED 1
 # Force python to not write .pyc files on the import of source modules
 ENV PYTHONDONTWRITEBYTECODE 1
 
+ENV PYTHONPATH=/usr/src/revenue
+
 EXPOSE 5000
 
 CMD ["python", "-m" , "flask", "run", "--host=0.0.0.0"]
