@@ -17,7 +17,7 @@
 
 3. Run unit tests
 
-    ```docker compose exec revenue bash
-
+    ```
+    docker compose exec revenue bash
     pytest
     ```
