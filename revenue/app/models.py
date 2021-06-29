@@ -3,10 +3,10 @@ from enum import Enum
 
 from playhouse.flask_utils import FlaskDB
 
-from pewee import (
+from peewee import (
     CharField,
-    ForeignKey,
-    DatetimeField,
+    ForeignKeyField,
+    DateTimeField,
     DecimalField,
     IntegerField,
 )
@@ -14,12 +14,19 @@ from pewee import (
 db = FlaskDB()
 
 
-class StatusEnum(str, Enum):
+class BaseStrEnum(str, Enum):
+
+    @property
+    def choices(cls):
+        return [(member.value, member.label) for member in cls]
+
+
+class StatusEnum(BaseStrEnum):
     PAID = 'Paid'
     DONE = 'Done'
 
 
-class EntryTypeEnum(str, Enum):
+class EntryTypeEnum(BaseStrEnum):
     RESTAURANT = 'Restaurant'
     TAKEAWAY = 'Takeaway'
     TAKEAWAY_SIMPLE = 'Takeaway Simple'
@@ -36,34 +43,36 @@ class Company(db.Model):
 
 
 class CustomerCompany(db.Model):
-    customer = ForeignKey(Customer)
-    company = ForeignKey(Company)
+    customer = ForeignKeyField(Customer)
+    company = ForeignKeyField(Company)
 
 
 class Floor(db.Model):
     name = CharField(unique=True)
-    company = ForeignKey(Company)
+    company = ForeignKeyField(Company)
 
 
 class Table(db.Model):
     name = CharField(default='')
-    floor = ForeignKey(Floor)
+    floor = ForeignKeyField(Floor)
 
 
 class Entry(db.Model):
-    status = CharField(choices=StatusEnum.choices)
-    entry_type = CharField(choices=EntryTypeEnum.choices)
+    status = CharField(
+        choices=StatusEnum.choices, default=StatusEnum.PAID.value)
+    entry_type = CharField(
+        choices=EntryTypeEnum.choices, default=EntryTypeEnum.RESTAURANT.value)
     net_total = DecimalField(max_digits=10, decimal_places=2)
     gross_total = DecimalField(max_digits=10, decimal_places=2)
     tip = DecimalField(max_digits=10, decimal_places=2, default=0)
     user_id = IntegerField()
-    customer = ForeignKey(Customer)
-    company = ForeignKey(Company)
-    table = ForeignKey(Table)
-    created = DatetimeField(default=datetime.utcnow)
-    modified = DatetimeField()
-    finalized = DatetimeField()
-    print_date = DatetimeField(null=True)
+    customer = ForeignKeyField(Customer)
+    company = ForeignKeyField(Company)
+    table = ForeignKeyField(Table, null=True)
+    created = DateTimeField(default=datetime.utcnow)
+    modified = DateTimeField()
+    finalized = DateTimeField()
+    print_date = DateTimeField(null=True)
 
     def save(self, *args, **kwargs):
         self.modified = datetime.utcnow()

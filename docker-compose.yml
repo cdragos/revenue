@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ./:/usr/src/revenue/
+      - ./revenue/:/usr/src/revenue/
     ports:
       - 5000:5000
 
